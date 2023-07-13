@@ -1,6 +1,10 @@
-const mongoose = require('mongoose')
+const mongoose = require('../utils/mongooseCon')
 
-const userSchema = new mongoose.Schema({
+const superAdminSchema = new mongoose.Schema({
     userName: String,
     password: String
 });
+
+const superAdmin = mongoose.model('superAdmin', superAdminSchema);
+
+module.exports = superAdmin;

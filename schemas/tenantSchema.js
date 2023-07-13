@@ -1,15 +1,5 @@
-const mongoose = require('mongoose');
-require('dotenv').config();
-const uri = process.env.MONGODB_URL;
+const mongoose = require('../utils/mongooseCon');
 
-async function connect() {
-    mongoose.connect(uri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        dbName: 'SuperAdminPortal',
-      });
-}
-connect().then(()=>console.log('connected')).catch((e)=>console.log(e));
 const tenantSchema = new mongoose.Schema({
     name: String,
     domain: String,
@@ -22,14 +12,4 @@ const tenantSchema = new mongoose.Schema({
     }
 });
 
-// const Tenant = mongoose.model('Tenant', tenantSchema);
-// const myntra = new Tenant({name: 'Myntra',
-//     domain: 'myntra.com',
-//     active: true,
-//     features: {
-//         volumeControlEnabled: true,
-//         productDrawerEnabled: true,
-//         reportEnabled: true,
-//         likeEnabled: true
-// }})
-// myntra.save();
+
