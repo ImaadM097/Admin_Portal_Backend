@@ -11,5 +11,6 @@ const tenantSchema = new mongoose.Schema({
         likeEnabled: Boolean
     }
 });
-
+const tenant = mongoose.model('tenant', tenantSchema);
+module.exports = tenant;
 

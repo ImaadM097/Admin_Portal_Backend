@@ -22,6 +22,7 @@ router.post("/", async(req, res)=>{
         bcrypt.compare(decrypted, passwordDB, function(err, result) {
             if(result) {
                 res.status(200);
+                
                 const token = jwt.sign({userName: userName}, jwtKey);
                 res.json({"userName": userName, "token": token});
             }
