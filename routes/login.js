@@ -11,8 +11,9 @@ const superAdmin = require('../schemas/superAdminSchema')
 router.post("/", async(req, res)=>{
     const userName = req.body.userName;
     const password = req.body.password;
+    const role = req.body.role;
     const admin = await superAdmin.findOne({userName: userName});
-    if(admin == null) {
+    if(admin === null || role !== "superAdmin") {
         res.status(400);
         res.json("Incorrect username or password")
     }
@@ -22,9 +23,8 @@ router.post("/", async(req, res)=>{
         bcrypt.compare(decrypted, passwordDB, function(err, result) {
             if(result) {
                 res.status(200);
-                
                 const token = jwt.sign({userName: userName}, jwtKey);
-                res.json({"userName": userName, "token": token});
+                res.json({"token": token});
             }
             else {
                 res.status(400);
