@@ -1,9 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt')
 const CryptoJS = require("crypto-js");
 const jwt = require('jsonwebtoken')
-require('dotenv').config();
 const secretKey = process.env.AESKEY;
 const jwtKey = process.env.JWT_KEY;
 const superAdmin = require('../schemas/superAdminSchema')
