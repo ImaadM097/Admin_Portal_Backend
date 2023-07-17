@@ -14,7 +14,6 @@ router.get('/list', authenticateToken, async(req,res)=>{
         res.json(allComments);
     }
     else {
-        
         const searchTerm = query['search'];
         if(typeof searchTerm !== undefined) {
             const filter = []
