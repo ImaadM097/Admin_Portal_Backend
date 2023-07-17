@@ -15,24 +15,23 @@ router.post("/", async(req, res)=>{
     const admin = await superAdmin.findOne({userName: userName});
     if(admin === null || role !== "superAdmin") {
         res.status(400);
-        res.json("Incorrect username or password")
+        res.json("Incorrect username or password");
     }
     else {
         const decrypted = CryptoJS.AES.decrypt(password, secretKey).toString(CryptoJS.enc.Utf8);
         const passwordDB = admin.password;
         bcrypt.compare(decrypted, passwordDB, function(err, result) {
-            if(result) {
+            if(result){
                 res.status(200);
-                const token = jwt.sign({userName: userName}, jwtKey);
+                const token = jwt.sign({userName: userName},jwtKey);
                 res.json({"token": token});
             }
-            else {
+            else{
                 res.status(400);
-                res.json("Incorrect username or password")
+                res.json("Incorrect username or password");
             }
         });
     }
-
 })
 
 module.exports = router;
