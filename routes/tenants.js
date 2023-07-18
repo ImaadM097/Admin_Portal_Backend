@@ -15,11 +15,32 @@ router.get('/list', authenticateToken, async(req, res)=>{
     else {
         
         const searchTerm = query['search'];
-        if(typeof searchTerm !== undefined) {
-            const result = await tenant.find({$or: [{name: searchTerm}, {domain: searchTerm}]});
-            res.json(result);
+        
+        const limit = query['limit'];
+        const offset = query['offset'];
+        console.log(limit)
+        if(searchTerm != null) {
+            if(query['offset'] == null ||  query['limit'] == null) {
+                const result = await tenant.find({$or: [{name: searchTerm}, {domain: searchTerm}]});
+                res.json(result);
+            }
+            else {
+                
+                const result = await tenant.find({$or: [{name: searchTerm}, {domain: searchTerm}]}).limit(limit).skip(offset);
+                res.json(result);
+            }
         }
-        else res.json({});
+        else {
+            
+            if(query['offset'] != null && query['limit'] != null) {
+                const result = await tenant.find({}).limit(parseInt(limit)).skip(parseInt(offset));
+                console.log(result)
+                res.json(result);
+            }
+            else {
+                res.json({});
+            }
+        }
     }
 })
 router.post('/create', authenticateToken, async(req, res)=>{

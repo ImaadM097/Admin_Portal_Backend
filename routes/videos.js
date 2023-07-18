@@ -15,11 +15,31 @@ router.get('/list', authenticateToken, async(req,res)=>{
     else {
         
         const searchTerm = query['search'];
-        if(typeof searchTerm !== undefined) {
-            const result = await video.find({$or: [{name: searchTerm}, {tenant: searchTerm}, {status: searchTerm},{duration:searchTerm},{video:searchTerm}]});
-            res.json(result);
+        console.log(searchTerm)
+        const limit = query['limit'];
+        const offset = query['offset'];
+        if(searchTerm != null) {
+            if(query['offset'] == null ||  query['limit'] == null) {
+                const result = await video.find({$or: [{name: searchTerm}, {tenant: searchTerm}, {status: searchTerm}, {duration: searchTerm}]});
+                res.json(result);
+            }
+            else {
+                
+                const result = await video.find({$or: [{name: searchTerm}, {tenant: searchTerm}, {status: searchTerm}, {duration: searchTerm}]}).limit(limit).skip(offset);
+                res.json(result);
+            }
         }
-        else res.json({});
+        else {
+            
+            if(query['offset'] != null && query['limit'] != null) {
+                const result = await video.find({}).limit(parseInt(limit)).skip(parseInt(offset));
+                console.log(result)
+                res.json(result);
+            }
+            else {
+                res.json({});
+            }
+        }
     }
 })
 router.post('/create', authenticateToken, async(req,res)=>{
