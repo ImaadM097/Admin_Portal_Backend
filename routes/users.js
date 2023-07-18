@@ -15,11 +15,33 @@ router.get('/list', authenticateToken,async(req, res)=>{
     else {
         
         const searchTerm = query['search'];
-        if(typeof searchTerm !== undefined) {
-            const result = await user.find({$or: [{name: searchTerm}, {tenant: searchTerm}, {role: searchTerm}]});
-            res.json(result);
+        
+        const limit = query['limit'];
+        const offset = query['offset'];
+        // console.log(limit)
+        if(searchTerm != null) {
+            console.log(searchTerm)
+            if(query['offset'] == null ||  query['limit'] == null) {
+                const result = await user.find({$or: [{name: searchTerm}, {tenant: searchTerm}, {role: searchTerm}]});
+                res.json(result);
+            }
+            else {
+                
+                const result = await user.find({$or: [{name: searchTerm}, {tenant: searchTerm}, {role: searchTerm}]}).limit(parseInt(limit)).skip(parseInt(offset));
+                res.json(result);
+            }
         }
-        else res.json({});
+        else {
+            
+            if(query['offset'] != null && query['limit'] != null) {
+                const result = await user.find({}).limit(parseInt(limit)).skip(parseInt(offset));
+                // console.log(result)
+                res.json(result);
+            }
+            else {
+                res.json({});
+            }
+        }
     }
 })
 
