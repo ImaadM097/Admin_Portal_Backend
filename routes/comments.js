@@ -15,16 +15,31 @@ router.get('/list', authenticateToken, async(req,res)=>{
     }
     else {
         const searchTerm = query['search'];
-        if(typeof searchTerm !== undefined) {
-            const filter = []
-            for(let i=0; i<searchFields.length; i++) {
-                filter.push({[searchFields[i]]  : searchTerm});
+        const limit = query['limit'];
+        const offset = query['offset'];
+        // console.log(limit)
+        if(searchTerm != null) {
+            if(query['offset'] == null ||  query['limit'] == null) {
+                const result = await comment.find({$or: [{channel_name: searchTerm}, {title: searchTerm}]});
+                res.json(result);
             }
-            console.log(filter)
-            const result = await comment.find({$or: filter});
-            res.json(result);
+            else {
+                
+                const result = await comment.find({$or: [{channel_name: searchTerm}, {title: searchTerm}]}).limit(limit).skip(offset);
+                res.json(result);
+            }
         }
-        else res.json({});
+        else {
+            
+            if(query['offset'] != null && query['limit'] != null) {
+                const result = await comment.find({}).limit(parseInt(limit)).skip(parseInt(offset));
+                console.log(result)
+                res.json(result);
+            }
+            else {
+                res.json({});
+            }
+        }
     }
 })
 
