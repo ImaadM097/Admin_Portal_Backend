@@ -15,24 +15,24 @@ router.get('/list', authenticateToken, async(req,res)=>{
     }
     else {
         const searchTerm = query['search'];
+        const page = query['page'];
         const limit = query['limit'];
-        const offset = query['offset'];
         // console.log(limit)
         if(searchTerm != null) {
-            if(query['offset'] == null ||  query['limit'] == null) {
-                const result = await comment.find({$or: [{channel_name: searchTerm}, {title: searchTerm}]});
+            if(query['page'] == null ||  query['limit'] == null) {
+                const result = await comment.find({$or: [{channel_name: {$regex: searchTerm}}, {title: {$regex: searchTerm}}]});
                 res.json(result);
             }
             else {
                 
-                const result = await comment.find({$or: [{channel_name: searchTerm}, {title: searchTerm}]}).limit(limit).skip(offset);
+                const result = await comment.find({$or: [{channel_name: {$regex: searchTerm}}, {title: {$regex: searchTerm}}]}).limit(parseInt(limit)).skip(parseInt(page-1)*parseInt(limit));
                 res.json(result);
             }
         }
         else {
             
-            if(query['offset'] != null && query['limit'] != null) {
-                const result = await comment.find({}).limit(parseInt(limit)).skip(parseInt(offset));
+            if(query['page'] != null && query['limit'] != null) {
+                const result = await comment.find({}).limit(parseInt(limit)).skip(parseInt(page-1)*parseInt(limit));
                 console.log(result)
                 res.json(result);
             }

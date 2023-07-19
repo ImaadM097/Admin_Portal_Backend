@@ -19,15 +19,15 @@ router.get('/list', authenticateToken, async(req, res)=>{
         
         const limit = query['limit'];
         const page = query['page'];
-        console.log(limit)
+        // console.log(limit)
         if(searchTerm != null) {
             if(query['page'] == null ||  query['limit'] == null) {
-                const result = await tenant.find({$or: [{name: searchTerm}, {domain: searchTerm}]});
+                const result = await tenant.find({$or: [{name: {$regex: searchTerm}}, {domain: {$regex: searchTerm}}]});
                 res.json(result);
             }
             else {
                 
-                const result = await tenant.find({$or: [{name: searchTerm}, {domain: searchTerm}]}).limit(parseInt(limit)).skip(parseInt(page-1)*parseInt(limit));
+                const result = await tenant.find({$or: [{name: {$regex: searchTerm}}, {domain: {$regex: searchTerm}}]}).limit(parseInt(limit)).skip(parseInt(page-1)*parseInt(limit));
                 res.json(result);
             }
         }
@@ -52,6 +52,16 @@ router.post('/create', authenticateToken, async(req, res)=>{
     }).catch((e)=>{
         res.json(e);
     })
+    
+})
+router.put('/update/:id', authenticateToken, async(req,res)=>{
+    const body = req.body;
+    const tenantID = req.params.id;
+    const updateTenant = tenant.findOneAndUpdate({_id: tenantID}, body).then((doc)=>{
+        res.status(200).json("Updated");
+    }).catch((e)=>{
+        res.json(e);
+    });
     
 })
 

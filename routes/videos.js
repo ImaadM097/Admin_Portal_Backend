@@ -15,25 +15,25 @@ router.get('/list', authenticateToken, async(req,res)=>{
     else {
         
         const searchTerm = query['search'];
-        console.log(searchTerm)
+        // console.log(searchTerm)
+        const page = query['page'];
         const limit = query['limit'];
-        const offset = query['offset'];
         if(searchTerm != null) {
-            if(query['offset'] == null ||  query['limit'] == null) {
-                const result = await video.find({$or: [{name: searchTerm}, {tenant: searchTerm}, {status: searchTerm}, {duration: searchTerm}]});
+            if(query['page'] == null ||  query['limit'] == null) {
+                const result = await video.find({$or: [{name: {$regex: searchTerm}}, {tenant: {$regex: searchTerm}}, {status: {$regex: searchTerm}}, {duration: {$regex: searchTerm}}]});
                 res.json(result);
             }
             else {
                 
-                const result = await video.find({$or: [{name: searchTerm}, {tenant: searchTerm}, {status: searchTerm}, {duration: searchTerm}]}).limit(limit).skip(offset);
+                const result = await video.find({$or: [{name: {$regex: searchTerm}}, {tenant: {$regex: searchTerm}}, {status: {$regex: searchTerm}}, {duration: {$regex: searchTerm}}]}).limit(parseInt(limit)).skip(parseInt(page-1)*parseInt(limit));
                 res.json(result);
             }
         }
         else {
             
-            if(query['offset'] != null && query['limit'] != null) {
-                const result = await video.find({}).limit(parseInt(limit)).skip(parseInt(offset));
-                console.log(result)
+            if(query['page'] != null && query['limit'] != null) {
+                const result = await video.find({}).limit(parseInt(limit)).skip(parseInt(page-1)*parseInt(limit));
+                // console.log(result)
                 res.json(result);
             }
             else {

@@ -25,7 +25,7 @@ router.post("/", async(req, res)=>{
             if(result){
                 res.status(200);
                 const token = jwt.sign({userName: userName},jwtKey);
-                res.json({"token": token, "userName":userName});
+                res.json({"token": token, "firstName":admin.firstName, "lastName": admin.lastName, "image": admin.image});
             }
             else{
                 res.status(400);

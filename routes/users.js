@@ -20,14 +20,14 @@ router.get('/list', authenticateToken,async(req, res)=>{
         const limit = query['limit'];
         // console.log(limit)
         if(searchTerm != null) {
-            console.log(searchTerm)
+            // console.log(searchTerm)
             if(query['page'] == null ||  query['limit'] == null) {
-                const result = await user.find({$or: [{name: searchTerm}, {tenant: searchTerm}, {role: searchTerm}]});
+                const result = await user.find({$or: [{name: {$regex: searchTerm}}, {tenant: {$regex: searchTerm}}, {role: {$regex: searchTerm}}]});
                 res.json(result);
             }
             else {
                 
-                const result = await user.find({$or: [{name: searchTerm}, {tenant: searchTerm}, {role: searchTerm}]}).limit(parseInt(limit)).skip(parseInt(page-1)*parseInt(limit));
+                const result = await user.find({$or: [{name: {$regex: searchTerm}}, {tenant: {$regex: searchTerm}}, {role: {$regex: searchTerm}}]}).limit(parseInt(limit)).skip(parseInt(page-1)*parseInt(limit));
                 res.json(result);
             }
         }
@@ -53,6 +53,16 @@ router.post('/create', authenticateToken, async(req,res)=>{
         res.json("Saved succesfully");
     }).catch((e)=>{
         res.json(e);
+    })
+})
+
+router.put('/update/:id', authenticateToken, async(req,res)=>{
+    const body = req.body;
+    const userID = req.params.id;
+    const updateUser = user.findOneAndUpdate({_id: userID}, body).then((doc)=>{
+        res.status(200).json("Updated");
+    }).catch((e)=>{
+        res.status(500).json(e);
     })
 })
 
