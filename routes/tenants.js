@@ -3,6 +3,7 @@ const router = express.Router();
 const tenant = require('../schemas/tenantSchema')
 const authenticateToken = require('../auth/authenticateToken')   //to be implemented
 router.use(authenticateToken)
+
 // const searchFields = ['name','domain','active']
 
 router.get('/list', authenticateToken, async(req, res)=>{
@@ -17,24 +18,24 @@ router.get('/list', authenticateToken, async(req, res)=>{
         const searchTerm = query['search'];
         
         const limit = query['limit'];
-        const offset = query['offset'];
+        const page = query['page'];
         console.log(limit)
         if(searchTerm != null) {
-            if(query['offset'] == null ||  query['limit'] == null) {
+            if(query['page'] == null ||  query['limit'] == null) {
                 const result = await tenant.find({$or: [{name: searchTerm}, {domain: searchTerm}]});
                 res.json(result);
             }
             else {
                 
-                const result = await tenant.find({$or: [{name: searchTerm}, {domain: searchTerm}]}).limit(limit).skip(offset);
+                const result = await tenant.find({$or: [{name: searchTerm}, {domain: searchTerm}]}).limit(parseInt(limit)).skip(parseInt(page-1)*parseInt(limit));
                 res.json(result);
             }
         }
         else {
             
-            if(query['offset'] != null && query['limit'] != null) {
-                const result = await tenant.find({}).limit(parseInt(limit)).skip(parseInt(offset));
-                console.log(result)
+            if(query['page'] != null && query['limit'] != null) {
+                const result = await tenant.find({}).limit(parseInt(limit)).skip(parseInt(page-1)*parseInt(limit));
+                // console.log(result)
                 res.json(result);
             }
             else {

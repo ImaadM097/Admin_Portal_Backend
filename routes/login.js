@@ -10,6 +10,7 @@ const superAdmin = require('../schemas/superAdminSchema')
 
 router.post("/", async(req, res)=>{
     const userName = req.body.userName;
+    console.log(userName);
     const password = req.body.password;
     const role = req.body.role;
     const admin = await superAdmin.findOne({userName: userName});
@@ -24,7 +25,7 @@ router.post("/", async(req, res)=>{
             if(result){
                 res.status(200);
                 const token = jwt.sign({userName: userName},jwtKey);
-                res.json({"token": token});
+                res.json({"token": token, "userName":userName});
             }
             else{
                 res.status(400);
